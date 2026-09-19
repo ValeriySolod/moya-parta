@@ -1,12 +1,10 @@
 # Цифровий світ класу — ланцюг проєкту
 
 > Живий файл стану. Агент **обовʼязково** читає його на старті задачі і **оновлює** після змін.
-> Останнє оновлення: 2026-08-31 (LICENSE + футер © Antony Kobys)
+> Останнє оновлення: 2026-09-19 (один Next.js-додаток: UI + `/api`, як nmt.in.ua)
 >
 > Початкове ТЗ: [`.cursor/ORIGINAL_PROMPT.md`](./ORIGINAL_PROMPT.md)
-> Презентація: [`presentation/index.html`](../presentation/index.html)
-> GitHub монорепо: https://github.com/tony-kobs/moya-parta
-> Прод: https://moya-parta.vercel.app · API: https://backend-myclassroom.onrender.com
+> Прод: https://moya-parta.vercel.app
 
 ---
 
@@ -52,23 +50,35 @@
 
 ---
 
-## 3. Структура репо
+## 3. Структура (один Next.js-додаток)
+
+Як на nmt.in.ua: **одна папка**, сторінки й API разом. Деплой — Vercel. MySQL лишається на VPS.
+
+```
+браузер → Next.js (Vercel: UI + /api) → MySQL `parta`
+```
 
 ```
 /
-├── frontend/     Next.js App Router, TS, CSS Modules, TanStack Query, Zustand
-├── backend/      Express, TS (GoIT: routes → controllers → services), Prisma + MySQL
-├── presentation/ ← дерево продукту для команди (HTML + Mermaid)
+├── src/app/              сторінки App Router
+├── src/app/api/          Route Handlers (той самий origin `/api`)
+├── src/server/           Prisma, сервіси, JWT
+├── src/components/
+├── prisma/               schema + seed (migrate з репо не ганяти)
+├── public/
+├── .env                  JWT_SECRET, DATABASE_URL (не комітити)
 ├── README.md
 └── .cursor/
-    ├── PROJECT_CHAIN.md      ← живий стан / рішення
-    ├── ORIGINAL_PROMPT.md    ← початкове ТЗ (не губити)
+    ├── PROJECT_CHAIN.md
+    ├── ORIGINAL_PROMPT.md
     └── rules/project-chain.mdc
 ```
 
-Запуск:
-- Backend `http://localhost:4000`
-- Frontend `http://localhost:3000`
+Окремих `frontend/`, `backend/`, `presentation/` **немає**. Express прибрано.
+
+Клієнт ходить на `/api` (без `NEXT_PUBLIC_API_URL`, якщо не заданий).
+
+Запуск: `npm run dev` → http://localhost:3000
 
 Demo:
 - Учень: `student@example.com` / `demo1234`
@@ -89,19 +99,18 @@ Demo:
 
 ### Учень
 - [x] Моя парта (`/desk`)
-- [x] Мій клас + дошка + реакції; зверху компактні квести/події (accordion), деталі — `/quests`, `/events`
-- [x] Мій клас — «Твій день» під банером класу (до 3 пунктів: недороблене → наступне завдання → найближча подія → новий квест, пріоритет і дедуп у чистій логіці `lib/dailyContext.ts`); композер посту перенесено нижче
+- [x] Мій клас + дошка + реакції
 - [x] Моя дошка (пости публікуються одразу)
 - [x] Чат: клас + особисті (`/chat`)
-- [x] Навчання: hero + фокус-чіпи (сьогодні/чекає/пізніше/тести/пропущене); квести — окрема вкладка
-- [x] Мої перемоги: hero, фільтри, галерея нагород (без порівнянь)
+- [x] Навчання: homework, quiz, quests, «Що я пропустив?» placeholder
+- [x] Мої перемоги / рюкзак / події
 - [x] XP + рівні (без втрати XP)
 - [x] Сповіщення, профіль
 
 ### Учитель
 - [x] Dashboard «Сьогодні»
 - [x] Створення класу / invite
-- [x] Завдання: створити/видалити з вікном `startsAt`/`endsAt`; після кінця — архів для перевірки + аналітика (участь / результати тесту)
+- [x] Завдання (створити / видалити), дошка (приховати пост), клас
 - [x] Тести: база шаблонів + свій тест + видалення
 - [x] Перевірка робіт: коментар → прийняти / доопрацювання / переробити тест
 - [x] Події класу: створити / видалити (`/teacher/events`), початок і кінець
@@ -109,27 +118,20 @@ Demo:
 - [x] Чат з класом і особисті з учнями
 
 ### Продукт / UI
-- [x] Бренд **Моя парта** (єдина назва) + tagline «Твоє місце в класі»
-- [x] AI-бренд ассети: `frontend/public/brand/` (logo, hero, og, icons, desk-scene)
-- [x] Landing: full-bleed hero, brand-first, без карток у hero
-- [x] Design tokens: teal/oak daylight (не purple SaaS)
-- [x] BrandMark у sidebar / login / register / join
-- [x] SEO: metadataBase, og:image, robots.ts, sitemap.ts
-- [x] App shell breakpoints: 320–440 / 768 / 1028 / 1440 / 1920
-- [x] Desk учня: hero з desk-scene, primary/secondary rail, teal XP on dark
-- [x] Teacher «Сьогодні»: ієрархія CTA (код → завдання), stats strip, split boards
-- [x] Учитель: «Запросити» в footer сайдбару; сповіщення — bell dropdown у шапці
-- [x] Чат desktop: правий dock + toggle; mobile: повна сторінка `/chat`
-- [x] Компактні дашборди + section themes (колір панелі = пункт сайдбару) + AI dash icons
-- [x] Єдиний sidebar + bottom nav
+- [x] Landing, design tokens, Nunito Sans
+- [x] Єдиний sidebar + bottom nav (стиль «Цифровий клас»)
 - [x] Червоні бейджі «нове»: чат, дошка, завдання/навчання, події, сповіщення, перемоги
 - [x] Loading / empty / toast
 - [x] AvatarPicker з selected-станом
 - [x] LICENSE (© 2026 Antony Kobys, all rights reserved)
-- [x] Мінімалістичний футер на публічних сторінках (landing, login, register, join)
+- [x] Мінімалістичний футер на публічних сторінках (лендинг, login, register, join)
 
 ### Чого НЕМАЄ (свідомо / далі)
-- [x] MySQL через Prisma (`192.168.0.212`, БД `parta`); seed — `npm run prisma:seed`
+- [x] Реальна БД у сервісах: **усі** (auth, posts, chat, notifications, teacher, learning, nav, student) + authMiddleware на Prisma
+- [x] Prisma + MySQL схема під весь MVP, `src/db`, `/api/health` пінг (`persistence: mysql`), ідемпотентний `db:seed`
+- [x] Інфра БД: **MySQL 8** `parta` на VPS (`31.42.165.176`). Локально — SSH-тунель `127.0.0.1:3307`
+- [x] Схема Prisma знята з живої БД (таблиці `User`, `ClassRoom`, …). Демо вже в БД (6 users / 3B-DEMO)
+- [x] Архітектура: **один Next.js-додаток** (UI + `/api` на Vercel, як nmt.in.ua). Express / окремі frontend+backend папки / презентація — прибрано
 - [ ] Батьківський кабінет (відхилено — варіант A)
 - [ ] School admin
 - [ ] Вчитель сам заводить учнів (стікери/PIN)
@@ -137,38 +139,6 @@ Demo:
 - [ ] Повний редактор персонажа / відео / платежі
 
 ---
-
-### 4a. Ігровий квест «Математична експедиція»
-
-- Квести з полем `questions` (масив з 5 математичних питань, `Quest.questions` у backend/`QuestQuestion[]` у frontend) — інтерактивні: учень проходить їх як міні-гру, а не кнопкою «Продовжити».
-- Квести без `questions` (напр. «Книжковий шлях») лишаються на старому потоці `POST /student/quests/:id/advance`.
-- Новий потік:
-  - `GET /student/quests/:id` — картка квесту + питання без `correctIndex` (аналог `safeQuiz`), `currentStep`/`completed` для поточного учня.
-  - `POST /student/quests/:id/answer` `{ stepIndex, optionIndex }` — перевіряє відповідь на сервері; невірний варіант не рухає прогрес (можна спробувати ще раз); вірний — просуває `currentStep`; на 5-му кроці нараховує наявні 50 XP **рівно один раз** (`progress.completed` guard) і позначає квест завершеним.
-  - Обидва ендпоїнти скопсовані на клас учня (`quest.classId === req.user.classId`) і на самого учня (`req.user.id`) — інший клас/учень не бачить і не може просунути чужий прогрес.
-  - `stepIndex` з тіла запиту звіряється з `progress.currentStep` на сервері — не дає проскочити кроки чи переграти вже пройдені.
-  - Прогрес не може перевищити `totalSteps` (`Math.min`).
-- Frontend: `/quests/[id]/play` — ілюстрований маршрут з 5 чекпоїнтами, персонаж-провідник (🦊) стоїть на поточному кроці, ProgressBar, MCQ-картка питання, дружній feedback (іконка + текст, не лише колір), кнопка «Далі» для переходу на наступний крок після вірної відповіді, екран-святкування після 5/5. `QuestCard` на `/quests` веде інтерактивні квести на `/play`, а старі — лишає на кнопці `advanceQuest`.
-- Доступність: власні кнопки-варіанти (нативна клавіатурна навігація), `:focus-visible` з токенів, `aria-live="polite"` для фідбеку, `aria-current="step"` на активному чекпоїнті, `prefers-reduced-motion` вимикає всі transition/animation глобально (`tokens.css`). Без рейтингів/таймерів/життів — тільки XP, що вже було в продукті.
-
-### 4b. Клас має явний `grade` (1–4) — не виводиться з назви
-
-- `ClassRoom.grade: 1 | 2 | 3 | 4` (тип `Grade`, backend `types/index.ts`) — обовʼязкове поле, **не** парситься з `name` (назва класу лишається вільним текстом на кшталт «3-Б»).
-- Створення класу (`POST /teacher/classes`, форма на `/teacher`): `grade` валідується явно (ціле число 1–4, зрозуміла помилка «Клас має бути від 1 до 4») і зберігається окремо від `name`. Демо-клас `class-3b` має `grade: 3`.
-- Рішення: назва класу — довільна (буває «3-Б», «Сонечко» тощо), тож для будь-якої логіки, привʼязаної до навчальної програми (зокрема квестів нижче), потрібне окреме явне поле, а не еврестичний парсинг назви.
-
-### 4c. «Математична експедиція» — 4 варіанти за класом (grade-aware quest)
-
-- Квест `quest-1` більше не має статичного `questions`; замість цього — `questionSource: 'grade-math'`. Це маркер «підбери банк питань за класом учня», а не сам банк.
-- Банк питань: `backend/src/data/mathExpeditionQuestions.ts` → `mathExpeditionQuestionsByGrade: Record<Grade, QuestQuestion[]>`, по 5 питань на клас 1–4, під програму:
-  - 1 клас — числа до 100, просте додавання/віднімання, порівняння, прості фігури, побутові задачі.
-  - 2 клас — додавання/віднімання до 100 з переходом через розряд, початкове множення/ділення, вимірювання, короткі текстові задачі.
-  - 3 клас — обчислення до 1000, множення/ділення, ділення з остачею, дроби виду 1/n, багатокрокові текстові задачі.
-  - 4 клас — числа до 1 000 000, письмові обчислення, дроби, рівняння, вимірювання, задачі на швидкість/час/відстань.
-- `learning.service.ts`: `resolveQuestQuestions(quest)` — якщо `questionSource === 'grade-math'`, шукає клас за `quest.classId` і бере `mathExpeditionQuestionsByGrade[classRoom.grade]`; інакше повертає `quest.questions` (лишається робочим шляхом для майбутніх нединамічних інтерактивних квестів). Використовується в `getQuestForStudent`, `answerQuestStep`, `advanceQuest`.
-- Безпека/скоуп: `quest.classId` тут завжди вже звірений із `req.user.classId` на етапі пошуку квесту (`db.quests.find(... && item.classId === student.classId)`) — тобто grade береться **лише** з класу самого автентифікованого учня. Клас чи ID квесту в запиті підмінити не можна — учень фізично не може отримати банк питань іншого класу/грейду через інший `id` чи payload.
-- `sanitizeQuest` повертає `grade` у відповіді (лише для `grade-math` квестів) поруч із питаннями без `correctIndex`.
-- Frontend: `/quests/[id]/play` показує заголовок `«Математична експедиція · N клас»`, де `N` — `quest.grade` із відповіді `GET /student/quests/:id` (тип `Grade` у `frontend/src/types`). Решта гри (маршрут, лисеня-провідник, доступність, feedback) без змін.
 
 ## 5. Ланцюг рішень (історія)
 
@@ -184,34 +154,31 @@ Demo:
 10. **2026-08-22:** учитель — тести з бази / свої, перевірка з коментарем (accept/revise/redo_test), видалення завдань і подій, CRUD подій класу.
 11. **2026-08-22:** єдиний сайдбар для всіх + соціальні бейджі навігації (`/api/nav/badges`).
 12. **2026-08-22:** події мають `startsAt`/`endsAt`; після кінця вчитель робить ревʼю і публікує на дошку.
-13. **2026-08-23:** бренд зафіксовано як **Моя парта** (не «Цифровий світ класу»); палітра teal/oak; новий marketing landing + OG/SEO скелет.
-14. **2026-08-23:** візуал кабінетів учня/вчителя + layout tokens для брекпоінтів 320–440 / 768 / 1028 / 1440 / 1920.
-15. **2026-08-23:** login redesign — split panel + AI visuals (`login-panel`, `login-wash`).
-16. **2026-08-23:** учитель — «Запросити» в низу сайдбару; сповіщення — іконка + dropdown у шапці.
-17. **2026-08-23:** чат на ≥1028px — правий dock (відкритий за замовчуванням, можна приховати); мобільний лишається `/chat`.
-18. **2026-08-23:** компактні дашборди вчителя/учня; section color system (градієнти панелей = колір сайдбару); AI dash-іконки.
-19. **2026-08-23:** завдання мають вікно `startsAt`/`endsAt`; після кінця зникають з активних у учнів, лишаються вчителю для перевірки; аналітика по завданню (участь + результати повʼязаного тесту) — лише для вчителя, не публічний рейтинг.
-20. **2026-08-23:** учень «Мій клас» — квести/події зверху компактно (випадаючі), дошка нижче; детальні сторінки `/quests` і `/events` у сайдбарі.
-21. **2026-08-23:** «Моє навчання» і «Мої перемоги» — hero + фокус/фільтри, менше дашборд-шуму; квести винесені з навчання в `/quests`.
-22. **2026-08-24 (MP-UI-01):** «Мій клас» — секція «Твій день» одразу під банером класу, максимум 3 актуальних пункти (недороблене → наступне завдання → найближча подія → новий квест), пріоритет/дедуп у чистій функції `frontend/src/lib/dailyContext.ts`; UI — `frontend/src/components/class/DailyContextCard.tsx`; композер посту перенесено під нову секцію; навігація завдань/подій/квестів збережена.
-22. **2026-08-23:** квест «Математична експедиція» став грою: 5 покрокових питань з вибором відповіді замість кнопки «Продовжити». Деталі — розділ 4a нижче.
-23. **2026-08-23:** клас отримав явне поле `grade` (1–4), не виведене з назви; демо-клас — grade 3. Деталі — розділ 4b.
-24. **2026-08-23:** «Математична експедиція» — 4 навчальні варіанти (по 5 питань на клас 1–4), сервер підбирає банк за класом самого учня. Деталі — розділ 4c.
+13. **2026-09-19:** інфра БД від команди — **MySQL** (не Postgres). Env для API живе в `backend/.env`.
+14. **2026-09-19:** Prisma 6 + повна схема MVP, міграція `init`, seed лише демо-id. Сервіси ще RAM.
+15. **2026-09-19:** локальний Docker-MySQL **відхилено** (Docker Desktop/WSL на цій машині не стартує). Повернуто `DATABASE_URL` колеги.
+16. **2026-09-19:** `parta-api.diesel.zp.ua` — прод API; Render більше не канон.
+17. **2026-09-19:** жива MySQL на VPS через SSH `-L 3307:127.0.0.1:3306`. Prisma schema introspect з `parta`. Сервіси ще RAM.
+18. **2026-09-19:** `teacher.service`, `learning.service`, `nav.service`, `student.service` і async `enrichEvent` читають/пишуть Prisma MySQL (`addXp` персистить профіль + xpTransaction + goalCurrentXp).
+19. **2026-09-19:** решта сервісів (auth, posts, chat, notifications) і `authMiddleware` на Prisma. Health `persistence: mysql`.
+20. **2026-09-19:** архітектура як nmt.in.ua — один Next.js (сторінки + Route Handlers). Прибрано `frontend/`, `backend/`, `presentation/`, Express. Prisma-сервіси в `src/server`.
 ---
 
 ## 6. Наступні кроки
 
-1. **Class-scoped checks (IDOR)** на всіх learning / event / post мутаціях — деталі: [`.cursor/NEXT_STEP_MYSQL.md`](./NEXT_STEP_MYSQL.md) §P0
-2. End-to-end: новий вчитель → клас → учень → пост → чат → завдання → перевірка.
-3. За потреби: вчитель створює учнів вручну (1–2 клас).
-4. Пізніше: websocket замість polling.
+1. **Vercel** — Root = корінь репо. Env: `JWT_SECRET`, `DATABASE_URL` (MySQL має бути доступний не лише з localhost VPS).
+2. Class-scoped checks (IDOR). План: [`.cursor/NEXT_STEP_POSTGRES.md`](./NEXT_STEP_POSTGRES.md).
+   Локально тунель: `ssh -p 443 -L 3307:127.0.0.1:3306 teamdeal@31.42.165.176`
+3. End-to-end: новий вчитель → клас → учень → пост → чат → завдання → перевірка.
+4. За потреби: вчитель створює учнів вручну (1–2 клас).
+5. Пізніше: websocket замість polling.
 
 ---
 
 ## 7. Правила роботи над проєктом
 
 - Не повертати батьківський/admin dashboard без явного запиту.
-- Не робити публічний leaderboard / рейтинги дітей (учительська аналітика по завданню — ок).
+- Не робити leaderboard / рейтинги дітей.
 - Не вимагати узгодження постів з учителем (можна лише приховати).
 - Чат лише всередині свого класу.
 - Мова UI — проста, дружня, українською.

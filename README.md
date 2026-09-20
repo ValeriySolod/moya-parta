@@ -50,7 +50,8 @@ cp .env.example .env
 npm install
 ```
 
-У `.env` підстав свої `JWT_SECRET` і `DATABASE_URL`.
+У `.env` підстав свої `JWT_SECRET` і `DATABASE_URL`.  
+Щоб UI ходив на прод API: `NEXT_PUBLIC_API_URL=https://parta-api.diesel.zp.ua/api` (у `.env.local`).
 
 Тунель до MySQL (не закривати):
 
@@ -78,7 +79,8 @@ Root Directory — корінь репо (не `frontend`).
 | `JWT_SECRET` | довгий секрет |
 | `DATABASE_URL` | `mysql://…` доступний з інтернету (не `127.0.0.1` VPS) |
 | `NODE_ENV` | `production` |
+| `NEXT_PUBLIC_API_URL` | `https://parta-api.diesel.zp.ua/api` (якщо UI на Vercel, API на VPS) |
 
-`NEXT_PUBLIC_API_URL` не потрібен: клієнт ходить на `/api` того самого домену.
+Щоб UI на Vercel ходив на VPS API, додай `NEXT_PUBLIC_API_URL=https://parta-api.diesel.zp.ua/api` і зроби redeploy. Без змінної клієнт ходить на `/api` того самого домену.
 
 Канон продукту: [`.cursor/PROJECT_CHAIN.md`](./.cursor/PROJECT_CHAIN.md).

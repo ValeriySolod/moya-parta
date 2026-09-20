@@ -1,7 +1,7 @@
 # Цифровий світ класу — ланцюг проєкту
 
 > Живий файл стану. Агент **обовʼязково** читає його на старті задачі і **оновлює** після змін.
-> Останнє оновлення: 2026-09-19 (один Next.js-додаток: UI + `/api`, як nmt.in.ua)
+> Останнє оновлення: 2026-09-20 (UI може ходити на `parta-api.diesel.zp.ua`)
 >
 > Початкове ТЗ: [`.cursor/ORIGINAL_PROMPT.md`](./ORIGINAL_PROMPT.md)
 > Прод: https://moya-parta.vercel.app
@@ -76,7 +76,8 @@
 
 Окремих `frontend/`, `backend/`, `presentation/` **немає**. Express прибрано.
 
-Клієнт ходить на `/api` (без `NEXT_PUBLIC_API_URL`, якщо не заданий).
+Клієнт ходить на `/api` того самого домену, якщо `NEXT_PUBLIC_API_URL` не заданий.  
+Прод API: `https://parta-api.diesel.zp.ua/api`. Локально (`next dev`) — проксі `/backend-api`, бо CORS diesel пускає лише `https://moya-parta.vercel.app`.
 
 Запуск: `npm run dev` → http://localhost:3000
 
@@ -162,6 +163,7 @@ Demo:
 18. **2026-09-19:** `teacher.service`, `learning.service`, `nav.service`, `student.service` і async `enrichEvent` читають/пишуть Prisma MySQL (`addXp` персистить профіль + xpTransaction + goalCurrentXp).
 19. **2026-09-19:** решта сервісів (auth, posts, chat, notifications) і `authMiddleware` на Prisma. Health `persistence: mysql`.
 20. **2026-09-19:** архітектура як nmt.in.ua — один Next.js (сторінки + Route Handlers). Прибрано `frontend/`, `backend/`, `presentation/`, Express. Prisma-сервіси в `src/server`.
+21. **2026-09-20:** вхід UI на API `https://parta-api.diesel.zp.ua/api` через `NEXT_PUBLIC_API_URL` (`.env.local`).
 ---
 
 ## 6. Наступні кроки

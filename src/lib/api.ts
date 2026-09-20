@@ -1,6 +1,12 @@
 import type { ApiResponse } from '@/types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api';
+const remoteApi = process.env.NEXT_PUBLIC_API_URL;
+
+/** У `next dev` — same-origin проксі (CORS на diesel пускає лише прод Vercel). */
+const API_URL =
+  remoteApi?.startsWith('http') && process.env.NODE_ENV === 'development'
+    ? '/backend-api'
+    : (remoteApi ?? '/api');
 
 export class ApiError extends Error {
   status: number;
